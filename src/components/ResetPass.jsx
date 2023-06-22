@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useUserContext } from '../contexts/userContext';
 import { useLocation } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import queryString from 'query-string';
 
 export const ResetPass = () => {
+  const { showAlert } = useUserContext();
+  const navigate = useNavigate();
   const baseUrl = 'http://localhost:5555/api';
   const [invalid, setInvalid] = useState(true);
   const [errMsg, setErrMsg] = useState('');
@@ -12,6 +15,8 @@ export const ResetPass = () => {
     cPassword: '',
   });
   const location = useLocation();
+
+  //verifying the token is valid or not
   const verifyToken = async () => {
     const { token, id } = queryString.parse(location.search);
     try {
@@ -30,6 +35,7 @@ export const ResetPass = () => {
   };
   useEffect(() => {
     verifyToken();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function handleChange(e) {
@@ -40,12 +46,31 @@ export const ResetPass = () => {
     });
   }
 
-  function handleClick(e) {
+  async function handleClick(e) {
     e.preventDefault();
     const { password, cPassword } = inputVal;
     if (password != cPassword) {
-      console.log("password doesn' match!");
+      showAlert('error', "passworld doesn't match");
       return;
+    }
+    try {
+      const { token, id } = queryString.parse(location.search);
+      const res = await fetch(
+        `${baseUrl}/reset-password?token=${token}&id=${id}`,
+        {
+          method: 'post',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ password }),
+        }
+      );
+      const data = await res.json();
+      if (data.success) {
+        navigate('/');
+      }
+    } catch (err) {
+      console.log(err);
     }
   }
   if (invalid) {

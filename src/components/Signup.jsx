@@ -27,6 +27,8 @@ const SignUp = () => {
   }
   return (
     <div className="flex flex-col bg-slate-500 gap-5 mt-10 px-8 py-10 rounded-lg">
+      <h2 className="text-center capitalize text-lg">Sign Up to Auth</h2>
+
       <input
         name="name"
         type="text"

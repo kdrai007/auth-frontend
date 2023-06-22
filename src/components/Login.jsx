@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useUserContext } from '../contexts/userContext';
 
+// eslint-disable-next-line react/prop-types
 const Login = () => {
   const navigate = useNavigate();
   const { LogInUser, loggedIn } = useUserContext();
@@ -30,6 +31,7 @@ const Login = () => {
   }
   return (
     <div className="flex flex-col bg-slate-500 gap-5 px-8 py-10 rounded-lg mt-10">
+      <h2 className="text-center capitalize text-lg">LogIn to Auth</h2>
       <input
         name="email"
         type="email"

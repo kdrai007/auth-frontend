@@ -5,3 +5,12 @@
 .font-cursive {
   font-family: cursive;
 }
+.success {
+  background-color: #d4edda;
+}
+.danger {
+  background-color: #eb7373;
+}
+.error {
+  background-color: #e9e97f;
+}

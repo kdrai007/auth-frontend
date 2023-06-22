@@ -5,9 +5,17 @@ const UserContext = createContext();
 
 export const UserProvider = (props) => {
   const [loggedIn, setLoggedIn] = useState(false);
-  // const [User,setUser]=()
-  const name = {
-    name: 'kdrai',
+  const [User, setUser] = useState({});
+  const [alert, setAlert] = useState(null);
+
+  const showAlert = (type, message) => {
+    setAlert({
+      message,
+      type,
+    });
+    setTimeout(() => {
+      setAlert(null);
+    }, 2000);
   };
 
   const LogInUser = async (email, password) => {
@@ -22,9 +30,10 @@ export const UserProvider = (props) => {
       const data = await res.json();
       if (data.success) {
         localStorage.setItem('token', JSON.stringify(data.token));
+        showAlert('success', 'Logged In successfully!');
         setLoggedIn(true);
       } else {
-        console.log(data);
+        showAlert('danger', data.error);
       }
     } catch (err) {
       console.log(err);
@@ -42,10 +51,11 @@ export const UserProvider = (props) => {
       const data = await res.json();
       if (data.success) {
         localStorage.setItem('token', JSON.stringify(data.token));
-        console.log('success', data);
+        showAlert('success', 'signed up successfully');
         setLoggedIn(true);
       } else {
         console.log('error', data);
+        showAlert('danger', data.error);
       }
     } catch (err) {
       console.log(err);
@@ -61,6 +71,12 @@ export const UserProvider = (props) => {
         body: JSON.stringify({ email }),
       });
       const data = await res.json();
+      if (data.success) {
+        showAlert('success', data.msg);
+      }
+      if (!data.success) {
+        showAlert('danger', data.error);
+      }
       console.log(data);
     } catch (err) {
       console.log(err);
@@ -76,7 +92,31 @@ export const UserProvider = (props) => {
         body: JSON.stringify({ email }),
       });
       const data = await res.json();
+      if (data.success) {
+        showAlert('success', data.msg);
+      }
+      if (!data.success) {
+        showAlert('danger', data.error);
+      }
       console.log(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const VerifyEmail = async (otp) => {
+    console.log(otp);
+    console.log(User._id);
+    try {
+      const res = await fetch('http://localhost:5555/api/verify-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId: User._id, otp }),
+      });
+      const data = await res.json();
+      return data;
     } catch (err) {
       console.log(err);
     }
@@ -86,13 +126,17 @@ export const UserProvider = (props) => {
     // eslint-disable-next-line react/prop-types
     <UserContext.Provider
       value={{
-        name,
         loggedIn,
         setLoggedIn,
         LogInUser,
         SignUpUser,
         ForgotPasswordUser,
         ResetPasswordUser,
+        VerifyEmail,
+        User,
+        setUser,
+        alert,
+        showAlert,
       }}
     >
       {props.children}
