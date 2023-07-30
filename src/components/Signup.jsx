@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useUserContext } from '../contexts/userContext';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 const SignUp = () => {
   const navigate = useNavigate();
   const { SignUpUser, loggedIn } = useUserContext();
+  const [recaptchaValue, setRecaptchaValue] = useState('');
   const [inputVal, setInputVal] = useState({
     name: '',
     email: '',
@@ -18,8 +20,17 @@ const SignUp = () => {
       [name]: value,
     });
   }
+  function onChange(value) {
+    setRecaptchaValue(value);
+  }
+
   async function handleSignup() {
-    await SignUpUser(inputVal.name, inputVal.email, inputVal.password);
+    await SignUpUser(
+      inputVal.name,
+      inputVal.email,
+      inputVal.password,
+      recaptchaValue
+    );
     navigate('/');
   }
   if (loggedIn) {
@@ -52,6 +63,10 @@ const SignUp = () => {
         placeholder="*****"
         value={inputVal.password}
         onChange={handleChange}
+      />
+      <ReCAPTCHA
+        sitekey="6Lef8L0mAAAAAOdYqvjPDZooG64U3su459kNWglz"
+        onChange={onChange}
       />
       <button
         className="w-full bg-slate-800 rounded-md py-2 mt-2 hover:bg-slate-600 transition duration-300 ease-in-out"

@@ -4,10 +4,14 @@ import { createContext, useContext, useState } from 'react';
 const UserContext = createContext();
 
 export const UserProvider = (props) => {
+  //using hook useState for creating boolean vars for checking if there is user logged In;
   const [loggedIn, setLoggedIn] = useState(false);
+  //saving users creadentials on this object;
   const [User, setUser] = useState({});
+  //creaing alerts for notify user in there is any error or success;
   const [alert, setAlert] = useState(null);
 
+  // a simple function to show notifiction for 2sec ;
   const showAlert = (type, message) => {
     setAlert({
       message,
@@ -17,15 +21,15 @@ export const UserProvider = (props) => {
       setAlert(null);
     }, 2000);
   };
-
-  const LogInUser = async (email, password) => {
+  //sending user's login data to backend for checking if users's credentials is right or not
+  const LogInUser = async (email, password, recaptchaValue) => {
     try {
       const res = await fetch('http://localhost:5555/api/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, recaptchaValue }),
       });
       const data = await res.json();
       if (data.success) {
@@ -39,14 +43,15 @@ export const UserProvider = (props) => {
       console.log(err);
     }
   };
-  const SignUpUser = async (name, email, password) => {
+  //sending user's signup data to backend for creating a new user;
+  const SignUpUser = async (name, email, password, recaptchaValue) => {
     try {
       const res = await fetch('http://localhost:5555/api/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ name, email, password, recaptchaValue }),
       });
       const data = await res.json();
       if (data.success) {
@@ -61,6 +66,7 @@ export const UserProvider = (props) => {
       console.log(err);
     }
   };
+  //creating a forgot-password route for sending reset-password link to email;
   const ForgotPasswordUser = async (email) => {
     try {
       const res = await fetch('http://localhost:5555/api/forgot-password', {
@@ -82,6 +88,7 @@ export const UserProvider = (props) => {
       console.log(err);
     }
   };
+  //new password handler
   const ResetPasswordUser = async (email) => {
     try {
       const res = await fetch('http://localhost:5555/api/reset-password', {
@@ -103,7 +110,7 @@ export const UserProvider = (props) => {
       console.log(err);
     }
   };
-
+  //handling user's email verifictions
   const VerifyEmail = async (otp) => {
     console.log(otp);
     console.log(User._id);
@@ -124,6 +131,7 @@ export const UserProvider = (props) => {
 
   return (
     // eslint-disable-next-line react/prop-types
+    //seding all function to all  the components
     <UserContext.Provider
       value={{
         loggedIn,

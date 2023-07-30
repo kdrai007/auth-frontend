@@ -3,9 +3,10 @@ import { useNavigate } from 'react-router-dom';
 
 // eslint-disable-next-line react/prop-types
 const NavBar = () => {
-  const { loggedIn, setLoggedIn, setUser, User, showAlert } = useUserContext();
+  const { loggedIn, setLoggedIn, setUser, User, showAlert } = useUserContext(); //importing functions from my userContext
   const navigate = useNavigate();
 
+  //handling logout function where we simply remove token from localstorage
   function handleLogout() {
     showAlert('success', 'Logged Out successfully!');
     localStorage.removeItem('token');

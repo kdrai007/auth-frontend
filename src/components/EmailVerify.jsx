@@ -3,9 +3,12 @@ import { useUserContext } from '../contexts/userContext';
 import { useNavigate } from 'react-router-dom';
 
 const EmailVerify = () => {
+  //importing functions from userContext
   const { showAlert, User, VerifyEmail } = useUserContext();
   const navigate = useNavigate();
+  //using hook useState for handling input numbers in this component
   const [Otp, setOtp] = useState();
+  //use useEffect hook for checking if there is any old token in database if not then creating a new one
   useEffect(() => {
     if (Object.keys(User).length === 0) return console.log('no User');
     showAlert('success', 'check your email to get your otp');
@@ -22,6 +25,7 @@ const EmailVerify = () => {
     checkVerficationToken();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  //here we simply handling form sbmit checking opt is right or not
   async function handleSubmit() {
     const data = await VerifyEmail(Otp);
     if (data.success) {
@@ -31,6 +35,7 @@ const EmailVerify = () => {
       showAlert('error', data.error);
     }
   }
+  //if user is already verified this comoponet just simply gonna let know user is already verified;
   if (User.verified) {
     return <h1 className="text-center">User is already verified</h1>;
   }

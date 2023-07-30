@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useUserContext } from '../contexts/userContext';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 // eslint-disable-next-line react/prop-types
 const Login = () => {
   const navigate = useNavigate();
+  const [recaptchaValue, setRecaptchaValue] = useState('');
   const { LogInUser, loggedIn } = useUserContext();
   const [inputVal, setInputVal] = useState({
     email: '',
@@ -21,12 +23,16 @@ const Login = () => {
       [name]: value,
     });
   }
+  function onChange(value) {
+    setRecaptchaValue(value);
+  }
   async function handleLogin() {
-    await LogInUser(inputVal.email, inputVal.password);
+    await LogInUser(inputVal.email, inputVal.password, recaptchaValue);
     setInputVal({
       email: '',
       password: '',
     });
+    setRecaptchaValue('');
     navigate('/');
   }
   return (
@@ -57,6 +63,10 @@ const Login = () => {
       >
         forgot password
       </Link>
+      <ReCAPTCHA
+        sitekey="6Lef8L0mAAAAAOdYqvjPDZooG64U3su459kNWglz"
+        onChange={onChange}
+      />
       <button
         className="w-full bg-slate-800 rounded-md py-2 mt-2 hover:bg-slate-600 transition duration-300 ease-in-out"
         onClick={handleLogin}
